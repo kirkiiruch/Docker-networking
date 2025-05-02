@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Expense Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
+            font-family: 'Inter', sans-serif;
+            padding-top: 40px;
+            margin: 0;
+            min-height: 100vh;
+            background-image: url('https://www.transparenttextures.com/patterns/45-degree-fabric-light.png');
+            background-size: 200px 200px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 20px;
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            position: relative;
+            z-index: 1;
+        }
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        h1 i {
+            color: #6366f1;
+            font-size: 3rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: #6366f1;
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            border-radius: 3px;
+        }
+        .btn-custom {
+            margin-right: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .delete-btn {
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .delete-btn:hover {
+            color: #dc2626;
+            text-decoration: underline;
+            transform: scale(1.05);
+        }
+        .chart-container {
+            position: relative;
+            margin: 40px 0;
+            height: 450px;
+            background: #f9fafb;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            outline: none;
+        }
+        .btn-primary {
+            background-color: #6366f1;
+            border-color: #6366f1;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+        .btn-success {
+            background-color: #10b981;
+            border-color: #10b981;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            background-color: #059669;
+            border-color: #059669;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #6b7280;
+            border-color: #6b7280;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563;
+            border-color: #4b5563;
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background-color: #ef4444;
+            border-color: #ef4444;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+            border-color: #dc2626;
+            transform: translateY(-2px);
+        }
+        .table {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            background: #fff;
+        }
+        .table th, .table td {
+            padding: 20px;
+            vertical-align: middle;
+            transition: background 0.3s ease;
+        }
+        .table thead {
+            background: linear-gradient(90deg, #6366f1, #a5b4fc);
+            color: #fff;
+            font-weight: 700;
+        }
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+        .table tbody tr:hover {
+            background: #f1f5f9;
+            transform: scale(1.01);
+        }
+        .sidebar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ffffff;
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .sidebar p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #1f2937;
+            font-weight: 600;
+        }
+        .sidebar .btn-danger {
+            padding: 8px 20px;
+            font-size: 0.95rem;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #10b981;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .notification[data-category="danger"] {
+            background-color: #ef4444;
+        }
+        .notification[data-category="success"] {
+            background-color: #10b981;
+        }
+        .notification[data-category="warning"] {
+            background-color: #f59e0b;
+        }
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .input-group label {
+            font-weight: 600;
+            color: #374151;
+            margin-right: 10px;
+        }
+        .form-section {
+            background: #f9fafb;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            border: 1px solid #e5e7eb;
+        }
+        .form-section h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+        .icon-decor {
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            font-size: 100px;
+            color: #6366f1;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        .chart-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #f9fafb;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <p>Welcome, <strong>{{ username }}</strong>!</p>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+
+    <div class="container">
+        <h1 class="text-center mb-4"><i class="fas fa-chart-pie"></i> Expense Calculator</h1>
+
+        <!-- Форма для добавления транзакции -->
+        <div class="form-section">
+            <h3>Add New Transaction</h3>
+            <div id="transactionForm" class="row g-3 justify-content-center mb-4">
+                <form method="POST" action="/add" class="row g-3 justify-content-center">
+                    <div class="col-auto">
+                        <input type="number" name="amount" placeholder="Amount" step="0.01" class="form-control" required>
+                    </div>
+                    <div class="col-auto">
+                        <select name="category" class="form-select" required>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <select name="currency" class="form-select" required>
+                            {% for curr in currencies %}
+                                <option value="{{ curr }}">{{ curr }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <select name="type" class="form-select" required>
+                            <option value="expense">Expense</option>
+                            <option value="income">Income</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <input type="datetime-local" name="date" class="form-control" value="{{ current_datetime }}" required>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-success">Add Transaction</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Таблица с расходами -->
+        <h2 class="mb-3">Expenses</h2>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Amount ({{ base_currency }})</th>
+                    <th>Original Amount (Original Currency)</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for id, amount, orig_amount, category, date, orig_currency in expenses %}
+                    <tr>
+                        <td>{{ '{:.2f}'.format(amount) }}</td>
+                        <td>{{ '{:.2f}'.format(orig_amount) }} {{ orig_currency }}</td>
+                        <td>{{ category }}</td>
+                        <td>{{ date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td><a href="/delete/{{ id }}" class="delete-btn">Delete</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Таблица с доходами -->
+        <h2 class="mb-3">Incomes</h2>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Amount ({{ base_currency }})</th>
+                    <th>Original Amount (Original Currency)</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for id, amount, orig_amount, category, date, orig_currency in incomes %}
+                    <tr>
+                        <td>{{ '{:.2f}'.format(amount) }}</td>
+                        <td>{{ '{:.2f}'.format(orig_amount) }} {{ orig_currency }}</td>
+                        <td>{{ category }}</td>
+                        <td>{{ date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td><a href="/delete/{{ id }}" class="delete-btn">Delete</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Таблица с суммами -->
+        <h2 class="mb-3">Totals ({{ base_currency }})</h2>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Total Expenses</td>
+                    <td>{{ '{:.2f}'.format(total_expenses) }}</td>
+                </tr>
+                <tr>
+                    <td>Total Incomes</td>
+                    <td>{{ '{:.2f}'.format(total_incomes) }}</td>
+                </tr>
+                <tr>
+                    <td>Net Balance</td>
+                    <td>{{ '{:.2f}'.format(total_incomes - total_expenses) }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- График -->
+        <h2 class="mb-3">Transactions Chart ({{ base_currency }})</h2>
+        <div class="chart-controls">
+            <!-- Перемещённые плашки для выбора валюты и периода -->
+            <div class="row g-3 justify-content-center">
+                <div class="col-auto">
+                    <select name="currency" class="form-select" onchange="window.location.href='/?currency=' + this.value + '&period={{ period }}'">
+                        {% for curr in currencies %}
+                            <option value="{{ curr }}" {{ 'selected' if base_currency == curr }}>{{ curr }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <select name="period" class="form-select" onchange="window.location.href='/?currency={{ base_currency }}&period=' + this.value">
+                        <option value="month" {{ 'selected' if period == 'month' }}>Last Month</option>
+                        <option value="year" {{ 'selected' if period == 'year' }}>This Year</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="transactionChart"></canvas>
+        </div>
+        <div class="text-center mt-3">
+            <button id="toggleChartType" class="btn btn-secondary btn-custom">Toggle Chart Type</button>
+            <button id="hideChart" class="btn btn-danger btn-custom">Hide Chart</button>
+        </div>
+    </div>
+    <input type="hidden" id="expenseData" value='{{ expenses | tojson | safe }}'>
+    <input type="hidden" id="incomeData" value='{{ incomes | tojson | safe }}'>
+
+    <!-- Всплывающее уведомление -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="notification" data-category="{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const notifications = document.querySelectorAll('.notification');
+            notifications.forEach((notification, index) => {
+                setTimeout(() => {
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.style.opacity = '0';
+                        setTimeout(() => notification.remove(), 500);
+                    }, 3000);
+                }, index * 500);
+            });
+
+            let isPieChart = true;
+            let chart = null;
+
+            const expenseDataRaw = document.getElementById('expenseData').value;
+            const incomeDataRaw = document.getElementById('incomeData').value;
+            const expenseData = JSON.parse(expenseDataRaw || '[]');
+            const incomeData = JSON.parse(incomeDataRaw || '[]');
+            const labels = [...new Set([...expenseData.map(item => item[3]), ...incomeData.map(item => item[3])])];
+            const expenseValues = labels.map(cat => expenseData.filter(item => item[3] === cat).reduce((sum, item) => sum + item[1], 0));
+            const incomeValues = labels.map(cat => incomeData.filter(item => item[3] === cat).reduce((sum, item) => sum + item[1], 0));
+
+            function createChart() {
+                const ctx = document.getElementById('transactionChart').getContext('2d');
+                if (chart) chart.destroy();
+                chart = new Chart(ctx, {
+                    type: isPieChart ? 'pie' : 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Expenses',
+                                data: expenseValues,
+                                backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Incomes',
+                                data: incomeValues,
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' } }
+                    }
+                });
+            }
+
+            createChart();
+
+            document.getElementById('toggleChartType').addEventListener('click', () => {
+                isPieChart = !isPieChart;
+                createChart();
+            });
+
+            document.getElementById('hideChart').addEventListener('click', () => {
+                const chartContainer = document.querySelector('.chart-container');
+                if (chartContainer.style.display === 'none') {
+                    chartContainer.style.display = 'block';
+                    document.getElementById('hideChart').textContent = 'Hide Chart';
+                } else {
+                    chartContainer.style.display = 'none';
+                    document.getElementById('hideChart').textContent = 'Show Chart';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

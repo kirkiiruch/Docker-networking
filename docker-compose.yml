@@ -1,0 +1,29 @@
+services:
+  web:
+    build: ./app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - app-network
+    environment:
+      - EXCHANGE_RATE_API_KEY=${EXCHANGE_RATE_API_KEY}
+
+  db:
+    image: postgres:17  # Фиксируем версию PostgreSQL
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=expense_db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
