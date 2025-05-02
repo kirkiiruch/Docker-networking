@@ -251,17 +251,3 @@ Contributions are welcome! To contribute:
 5. Open a Pull Request.
 
 ---
-
-## 📜 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-## 📧 Contact
-
-For questions or feedback, feel free to reach out:
-- **GitHub**: [your-username](https://github.com/your-username)
-- **Email**: your-email@example.com
-
-Happy budgeting! 💰
